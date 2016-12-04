@@ -23,3 +23,7 @@ _testmain.go
 
 # Editor cruft
 *.swp
+
+# IntelliJ IDEA
+.idea
+turnpike.iml
