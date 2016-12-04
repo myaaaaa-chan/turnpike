@@ -149,10 +149,11 @@ func (t *Server) UnregisterPubHandler(uri string) {
 }
 
 // SendEvent sends an event with topic directly (not via Client.Publish())
-func (t *Server) SendEvent(topic string, event interface{}) {
+func (t *Server) SendEvent(topic string, event interface{}, excludeList []string) {
 	t.handlePublish(topic, publishMsg{
 		TopicURI: topic,
 		Event:    event,
+		ExcludeList: excludeList,
 	})
 }
 
