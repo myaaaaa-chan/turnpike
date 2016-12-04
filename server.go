@@ -43,6 +43,7 @@ type Server struct {
 	subscriptions       map[string]listenerMap
 	subLock             *sync.Mutex
 	sessionOpenCallback func(string)
+	sessionCloseCallback func(string)
 	websocket.Server
 }
 
@@ -99,6 +100,13 @@ func NewServer() *Server {
 func (t *Server) SetSessionOpenCallback(f func(string)) {
 	t.sessionOpenCallback = f
 }
+
+// SetSessionCloseCallback adds a callback function that is run when a session disconnected.
+// The callback function must accept a string argument that is the session ID.
+func (t *Server) SetSessionCloseCallback(f func(string)) {
+	t.sessionCloseCallback = f
+}
+
 
 // RegisterRPC adds a handler for the RPC named uri.
 func (t *Server) RegisterRPC(uri string, f RPCHandler) {
@@ -227,6 +235,9 @@ func (t *Server) HandleWebsocket(conn *websocket.Conn) {
 		}
 		if debug {
 			log.Printf("Client %s disconnected", id)
+		}
+		if (t.sessionCloseCallback != nil) {
+			t.sessionCloseCallback(id)
 		}
 		conn.Close()
 	}()
